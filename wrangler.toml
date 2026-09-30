@@ -1,6 +1,11 @@
-name = "spde-fluid-topology"
+name = "stochastic-fluid-structure-topology-interactions"
 compatibility_date = "2024-09-23"
-pages_build_output_dir = "dist"
+pages_build_output_dir = "./dist"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
 
 [env.production]
-name = "spde-fluid-topology-prod"
+name = "stochastic-fluid-structure-topology-interactions"
