@@ -1,19 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  BookOpen, Activity, FileCode, Cloud, Sun, Moon, Download, 
-  ExternalLink, Sparkles, CheckCircle2, ChevronRight, Terminal, Globe, Award
+  BookOpen, Activity, FileCode, Sun, Moon, 
+  ExternalLink, Award, Copy, Check, Printer
 } from 'lucide-react';
 import { PaperViewer } from './components/PaperViewer';
 import { InteractiveSimulation } from './components/InteractiveSimulation';
 import { SourceExplorer } from './components/SourceExplorer';
-import { CloudflareDeployModal } from './components/CloudflareDeployModal';
 
 type TabType = 'paper' | 'simulation' | 'source';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('paper');
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-  const [isDeployModalOpen, setIsDeployModalOpen] = useState<boolean>(false);
+  const [copiedBibtex, setCopiedBibtex] = useState<boolean>(false);
+
+  const bibtexEntry = `@article{Ananda2026_SPDE_V2,
+  title={Stochastic Fluid-Structure-Topology Interactions: Rigorous Homogenization and Lasry-Lions Optimal Control of Fractional SPDEs via Kunita Flows},
+  author={Ghulam-e-Shah-e-Unmani (Arya Arunachala Ananda)},
+  organization={Aghora Abraham Global LLC},
+  address={Albuquerque, New Mexico, USA},
+  year={2026},
+  month={September},
+  version={2.0},
+  doi={10.5281/zenodo.23040167},
+  url={https://doi.org/10.5281/zenodo.23040167}
+}`;
+
+  const copyBibtex = () => {
+    navigator.clipboard.writeText(bibtexEntry);
+    setCopiedBibtex(true);
+    setTimeout(() => setCopiedBibtex(false), 2200);
+  };
 
   // Sync dark mode class with root html
   useEffect(() => {
@@ -26,51 +43,31 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex flex-col font-sans transition-colors">
-      {/* Top Banner for Cloudflare Subdomain Ready Announcement */}
-      <div className="no-print bg-gradient-to-r from-orange-600 via-amber-600 to-indigo-600 text-white px-4 py-2 text-xs font-medium flex items-center justify-between shadow-xs">
-        <div className="flex items-center gap-2 max-w-7xl mx-auto w-full justify-between">
-          <div className="flex items-center gap-2">
-            <span className="bg-white/20 px-2 py-0.5 rounded text-[11px] font-bold">Cloudflare Ready</span>
-            <span className="hidden sm:inline">
-              Built from <code className="bg-black/20 px-1 py-0.5 rounded font-mono">SPDE_production_v2_final.tex</code> — Ready to deploy on your Cloudflare custom subdomain!
-            </span>
-          </div>
-
-          <button
-            onClick={() => setIsDeployModalOpen(true)}
-            className="flex items-center gap-1.5 bg-white text-neutral-900 hover:bg-neutral-100 px-3 py-1 rounded-lg text-xs font-bold transition-all shadow-xs shrink-0"
-          >
-            <Cloud className="w-3.5 h-3.5 text-orange-600" />
-            Deploy to Cloudflare Subdomain
-          </button>
-        </div>
-      </div>
-
-      {/* Main Navigation Header */}
-      <header className="no-print sticky top-0 z-40 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800 transition-colors">
+      {/* Top Academic Journal Header */}
+      <header className="no-print sticky top-0 z-40 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800 transition-colors shadow-2xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          {/* Logo & Paper Identity */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-serif text-xl font-bold shadow-md shadow-indigo-500/20">
+          {/* Institution & Title Identity */}
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-serif text-xl font-bold shadow-md shadow-indigo-500/20 shrink-0">
               ∯
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-black font-academic text-neutral-900 dark:text-neutral-100 tracking-tight">
+                <span className="text-sm font-black font-academic text-neutral-900 dark:text-neutral-100 tracking-tight truncate">
                   Stochastic Fluid-Structure-Topology Interactions
                 </span>
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300 rounded-full font-mono">
+                <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300 rounded-full font-mono shrink-0">
                   v2.0
                 </span>
               </div>
-              <p className="text-[11px] text-neutral-500 dark:text-neutral-400 truncate max-w-xs sm:max-w-md">
+              <p className="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">
                 Ghulam-e-Shah-e-Unmani • Aghora Abraham Global LLC
               </p>
             </div>
           </div>
 
-          {/* Navigation Tabs */}
-          <nav className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl">
+          {/* Center Navigation Tabs */}
+          <nav className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl shrink-0">
             <button
               onClick={() => setActiveTab('paper')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -104,12 +101,30 @@ export const App: React.FC = () => {
               }`}
             >
               <FileCode className="w-3.5 h-3.5" />
-              <span>LaTeX Source</span>
+              <span>LaTeX &amp; CUDA</span>
             </button>
           </nav>
 
           {/* Right Action Tools */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={copyBibtex}
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200/80 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg text-xs font-medium transition-colors"
+              title="Copy BibTeX Citation"
+            >
+              {copiedBibtex ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-neutral-500" />}
+              <span>{copiedBibtex ? 'BibTeX Copied' : 'Cite'}</span>
+            </button>
+
+            <button
+              onClick={() => window.print()}
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200/80 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg text-xs font-medium transition-colors"
+              title="Print or export paper as PDF"
+            >
+              <Printer className="w-3.5 h-3.5 text-neutral-500" />
+              <span>Print / PDF</span>
+            </button>
+
             {/* Dark Mode Toggle */}
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
@@ -117,15 +132,6 @@ export const App: React.FC = () => {
               title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
-            </button>
-
-            {/* Cloudflare Deploy Trigger */}
-            <button
-              onClick={() => setIsDeployModalOpen(true)}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/50 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800 rounded-xl text-xs font-semibold transition-colors"
-            >
-              <Cloud className="w-3.5 h-3.5 text-orange-600" />
-              Cloudflare Subdomain
             </button>
           </div>
         </div>
@@ -136,9 +142,10 @@ export const App: React.FC = () => {
         {/* Render Active View */}
         {activeTab === 'paper' && (
           <div>
+            {/* Publication DOI Banner */}
             <div className="no-print mb-8 p-4 rounded-xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/40 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <Award className="w-6 h-6 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                <Award className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0" />
                 <div className="text-xs">
                   <span className="font-bold text-neutral-800 dark:text-neutral-200">DOI Indexed Publication:</span>{' '}
                   <span className="text-neutral-600 dark:text-neutral-400">
@@ -147,7 +154,7 @@ export const App: React.FC = () => {
                       href="https://doi.org/10.5281/zenodo.23040167"
                       target="_blank"
                       rel="noreferrer"
-                      className="font-mono text-blue-600 dark:text-blue-400 underline"
+                      className="font-mono text-blue-600 dark:text-blue-400 hover:underline"
                     >
                       10.5281/zenodo.23040167
                     </a>
@@ -161,12 +168,12 @@ export const App: React.FC = () => {
                   className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-xs"
                 >
                   <Activity className="w-3.5 h-3.5" />
-                  Test Live Numerical Simulation
+                  Launch Interactive Numerical Simulation
                 </button>
               </div>
             </div>
 
-            <PaperViewer onOpenDeployModal={() => setIsDeployModalOpen(true)} />
+            <PaperViewer />
           </div>
         )}
 
@@ -203,12 +210,6 @@ export const App: React.FC = () => {
         )}
       </main>
 
-      {/* Cloudflare Deploy Guide Modal */}
-      <CloudflareDeployModal
-        isOpen={isDeployModalOpen}
-        onClose={() => setIsDeployModalOpen(false)}
-      />
-
       {/* Academic Paper Footer */}
       <footer className="no-print mt-auto border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 py-8 px-4 sm:px-6 lg:px-8 text-xs text-neutral-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -232,12 +233,15 @@ export const App: React.FC = () => {
               <ExternalLink className="w-3 h-3" />
             </a>
             <span>•</span>
-            <button
-              onClick={() => setIsDeployModalOpen(true)}
-              className="text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1"
+            <a
+              href="https://doi.org/10.5281/zenodo.22806453"
+              target="_blank"
+              rel="noreferrer"
+              className="text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-300 hover:underline flex items-center gap-1"
             >
-              <span>Cloudflare Subdomain Guide</span>
-            </button>
+              <span>Version 1.0 Archive</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
           </div>
         </div>
       </footer>
