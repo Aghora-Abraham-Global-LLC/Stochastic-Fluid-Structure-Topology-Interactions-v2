@@ -1,0 +1,9 @@
+{
+  "name": "Stochastic Fluid-Structure-Topology Interactions",
+  "description": "Rigorous Homogenization and Lasry-Lions Optimal Control of Fractional SPDEs via Kunita Flows - Research Paper, Interactive Simulation & Cloudflare Web Portal",
+  "version": "2.0.0",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

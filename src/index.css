@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-serif: 'STIX Two Text', 'Merriweather', Cambria, Georgia, serif;
+    --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --font-heading: 'Cinzel', serif;
+  }
+}
+
+.font-academic {
+  font-family: var(--font-serif);
+}
+
+.font-mono-code {
+  font-family: var(--font-mono);
+}
+
+/* Custom math display refinements */
+.katex-display {
+  margin: 1.25rem 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0;
+}
+
+.katex {
+  font-size: 1.05em;
+  text-rendering: geometricPrecision;
+}
+
+/* Academic paper print styling for PDF output */
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+    font-size: 10.5pt;
+    line-height: 1.5;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  .academic-paper-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  a {
+    color: #1a365d !important;
+    text-decoration: underline;
+  }
+}
+
+/* Custom scrollbar for mathematical codes */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
+}
