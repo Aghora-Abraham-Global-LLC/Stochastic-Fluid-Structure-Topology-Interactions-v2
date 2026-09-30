@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { 
   FileText, ExternalLink, Bookmark, Check, Copy, ChevronDown, ChevronRight, 
-  Code2, Printer, Sparkles, BookOpen, Cpu, ListTree
+  Code2, Printer, Sparkles, BookOpen, Cpu, ListTree, Terminal
 } from 'lucide-react';
 import { MathView } from './MathView';
 
 export const PaperViewer: React.FC = () => {
-  const [copiedBibtex, setCopiedBibtex] = useState<boolean>(false);
+  const [copiedPaperBibtex, setCopiedPaperBibtex] = useState<boolean>(false);
+  const [copiedSoftwareBibtex, setCopiedSoftwareBibtex] = useState<boolean>(false);
   const [copiedCuda, setCopiedCuda] = useState<boolean>(false);
   const [proofExpanded, setProofExpanded] = useState<boolean>(true);
   const [activeSection, setActiveSection] = useState<string>('sec-abstract');
 
-  const bibtexEntry = `@article{Ananda2026_SPDE_V2,
+  const paperBibtexEntry = `@article{Ananda2026_SPDE_V2,
   title={Stochastic Fluid-Structure-Topology Interactions: Rigorous Homogenization and Lasry-Lions Optimal Control of Fractional SPDEs via Kunita Flows},
   author={Ghulam-e-Shah-e-Unmani (Arya Arunachala Ananda)},
   organization={Aghora Abraham Global LLC},
@@ -21,6 +22,18 @@ export const PaperViewer: React.FC = () => {
   version={2.0},
   doi={10.5281/zenodo.23040167},
   url={https://doi.org/10.5281/zenodo.23040167}
+}`;
+
+  const softwareBibtexEntry = `@software{Ananda2026_SPDE_Software,
+  title={Stochastic Fluid-Structure-Topology Interactions: Fractional SPDE & Lasry-Lions Numerical Solver Suite},
+  author={Ghulam-e-Shah-e-Unmani (Arya Arunachala Ananda)},
+  organization={Aghora Abraham Global LLC},
+  address={Albuquerque, New Mexico, USA},
+  year={2026},
+  month={September},
+  version={2.0.0},
+  doi={10.5281/zenodo.23055112},
+  url={https://doi.org/10.5281/zenodo.23055112}
 }`;
 
   const cudaCode = `__global__ void spde_imex_fractional_krylov_kernel(
@@ -48,10 +61,16 @@ export const PaperViewer: React.FC = () => {
     rhs_out[idx] = rho_in[idx] + drift * dt + diffusion;
 }`;
 
-  const copyBibtex = () => {
-    navigator.clipboard.writeText(bibtexEntry);
-    setCopiedBibtex(true);
-    setTimeout(() => setCopiedBibtex(false), 2200);
+  const copyPaperBibtex = () => {
+    navigator.clipboard.writeText(paperBibtexEntry);
+    setCopiedPaperBibtex(true);
+    setTimeout(() => setCopiedPaperBibtex(false), 2200);
+  };
+
+  const copySoftwareBibtex = () => {
+    navigator.clipboard.writeText(softwareBibtexEntry);
+    setCopiedSoftwareBibtex(true);
+    setTimeout(() => setCopiedSoftwareBibtex(false), 2200);
   };
 
   const copyCuda = () => {
@@ -90,7 +109,7 @@ export const PaperViewer: React.FC = () => {
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-start">
       {/* Sticky Table of Contents Sidebar */}
-      <aside className="no-print hidden lg:block w-64 shrink-0 sticky top-24 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 shadow-xs">
+      <aside className="no-print hidden lg:block w-68 shrink-0 sticky top-24 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 shadow-xs">
         <div className="flex items-center gap-2 pb-3 mb-3 border-b border-neutral-100 dark:border-neutral-800 text-xs font-bold text-neutral-800 dark:text-neutral-200 uppercase tracking-wider">
           <ListTree className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
           <span>Table of Contents</span>
@@ -111,24 +130,55 @@ export const PaperViewer: React.FC = () => {
           ))}
         </nav>
 
-        <div className="mt-6 pt-4 border-t border-neutral-100 dark:border-neutral-800 space-y-2">
+        {/* Dual Citation & Registry Records */}
+        <div className="mt-6 pt-4 border-t border-neutral-100 dark:border-neutral-800 space-y-2.5">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-neutral-500">
+            Citation &amp; Zenodo DOIs
+          </div>
+
           <button
-            onClick={copyBibtex}
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 text-xs font-medium transition-colors"
+            onClick={copyPaperBibtex}
+            className="w-full flex items-center justify-between px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 text-xs font-medium transition-colors"
           >
-            {copiedBibtex ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-neutral-500" />}
-            {copiedBibtex ? 'BibTeX Copied' : 'Cite (BibTeX)'}
+            <span className="flex items-center gap-1.5">
+              <FileText className="w-3.5 h-3.5 text-blue-600" />
+              <span>Cite Paper</span>
+            </span>
+            {copiedPaperBibtex ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-neutral-400" />}
           </button>
 
-          <a
-            href="https://doi.org/10.5281/zenodo.23040167"
-            target="_blank"
-            rel="noreferrer"
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-medium transition-colors"
+          <button
+            onClick={copySoftwareBibtex}
+            className="w-full flex items-center justify-between px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 text-xs font-medium transition-colors"
           >
-            <span>Zenodo DOI Record</span>
-            <ExternalLink className="w-3 h-3" />
-          </a>
+            <span className="flex items-center gap-1.5">
+              <Terminal className="w-3.5 h-3.5 text-indigo-600" />
+              <span>Cite Software</span>
+            </span>
+            {copiedSoftwareBibtex ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-neutral-400" />}
+          </button>
+
+          <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800 space-y-1.5">
+            <a
+              href="https://doi.org/10.5281/zenodo.23040167"
+              target="_blank"
+              rel="noreferrer"
+              className="w-full flex items-center justify-between px-2.5 py-1 rounded text-[11px] font-mono text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors"
+            >
+              <span>Paper: 23040167</span>
+              <ExternalLink className="w-3 h-3 shrink-0" />
+            </a>
+
+            <a
+              href="https://doi.org/10.5281/zenodo.23055112"
+              target="_blank"
+              rel="noreferrer"
+              className="w-full flex items-center justify-between px-2.5 py-1 rounded text-[11px] font-mono text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
+            >
+              <span>Software: 23055112</span>
+              <ExternalLink className="w-3 h-3 shrink-0" />
+            </a>
+          </div>
         </div>
       </aside>
 
@@ -145,11 +195,21 @@ export const PaperViewer: React.FC = () => {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={copyBibtex}
+              onClick={copyPaperBibtex}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-600 font-sans text-xs transition-all shadow-xs"
+              title="Copy Manuscript BibTeX entry"
             >
-              {copiedBibtex ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-neutral-500" />}
-              {copiedBibtex ? 'BibTeX Copied!' : 'Cite (BibTeX)'}
+              {copiedPaperBibtex ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-neutral-500" />}
+              {copiedPaperBibtex ? 'Paper BibTeX Copied!' : 'Cite Paper'}
+            </button>
+
+            <button
+              onClick={copySoftwareBibtex}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-600 font-sans text-xs transition-all shadow-xs"
+              title="Copy Software Suite BibTeX entry (DOI: 10.5281/zenodo.23055112)"
+            >
+              {copiedSoftwareBibtex ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Code2 className="w-3.5 h-3.5 text-indigo-500" />}
+              {copiedSoftwareBibtex ? 'Software BibTeX Copied!' : 'Cite Software'}
             </button>
 
             <button
@@ -178,17 +238,28 @@ export const PaperViewer: React.FC = () => {
                   Aghora Abraham Global LLC, Albuquerque, New Mexico, USA
                 </p>
               </div>
-              <div className="text-xs text-neutral-500 dark:text-neutral-400 font-mono sm:text-right space-y-1">
+              <div className="text-xs text-neutral-500 dark:text-neutral-400 font-mono sm:text-right space-y-1.5">
                 <div>Version 2.0 • September 29, 2026</div>
                 <div>
-                  DOI:{' '}
+                  <span className="text-neutral-400">Manuscript DOI: </span>
                   <a
                     href="https://doi.org/10.5281/zenodo.23040167"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-blue-600 dark:text-blue-400 hover:underline"
+                    className="text-blue-600 dark:text-blue-400 hover:underline font-bold"
                   >
                     10.5281/zenodo.23040167
+                  </a>
+                </div>
+                <div>
+                  <span className="text-neutral-400">Software Suite DOI: </span>
+                  <a
+                    href="https://doi.org/10.5281/zenodo.23055112"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-indigo-600 dark:text-indigo-400 hover:underline font-bold"
+                  >
+                    10.5281/zenodo.23055112
                   </a>
                 </div>
               </div>
@@ -216,6 +287,9 @@ export const PaperViewer: React.FC = () => {
               </div>
               <div>
                 <span className="font-semibold text-neutral-700 dark:text-neutral-300">Keywords:</span> Fractional SPDEs, Kunita Stochastic Flows, Orthonormal Frame Bundle Homogenization, Lasry-Lions Regularization, Generalized Itô-Wentzell Formula, Chebyshev Krylov Subspace.
+              </div>
+              <div className="pt-1 text-[11px] font-mono text-neutral-600 dark:text-neutral-400">
+                <span className="font-semibold">Archival Registry:</span> Manuscript DOI <a href="https://doi.org/10.5281/zenodo.23040167" target="_blank" rel="noreferrer" className="underline text-blue-600 dark:text-blue-400">10.5281/zenodo.23040167</a> • Software Solver DOI <a href="https://doi.org/10.5281/zenodo.23055112" target="_blank" rel="noreferrer" className="underline text-indigo-600 dark:text-indigo-400">10.5281/zenodo.23055112</a>
               </div>
             </div>
           </div>
@@ -488,6 +562,29 @@ export const PaperViewer: React.FC = () => {
                 <code>{cudaCode}</code>
               </pre>
             </div>
+
+            <div className="p-4 rounded-xl bg-indigo-50/60 dark:bg-indigo-950/25 border border-indigo-200 dark:border-indigo-900/40 text-xs text-neutral-600 dark:text-neutral-400 flex items-center justify-between gap-4">
+              <div>
+                <strong className="text-neutral-900 dark:text-neutral-200 font-sans block mb-0.5">
+                  Associated Computational Software Suite (Version 2.0.0):
+                </strong>
+                The full numerical implementation, interactive IMEX solver, and Krylov matrix routines are registered under{' '}
+                <a
+                  href="https://doi.org/10.5281/zenodo.23055112"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mono text-indigo-600 dark:text-indigo-400 underline font-bold"
+                >
+                  DOI: 10.5281/zenodo.23055112
+                </a>.
+              </div>
+              <button
+                onClick={copySoftwareBibtex}
+                className="shrink-0 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-sans text-xs font-semibold transition-colors"
+              >
+                {copiedSoftwareBibtex ? 'BibTeX Copied!' : 'Cite Software'}
+              </button>
+            </div>
           </section>
 
           {/* Section 8: Conclusion */}
@@ -511,6 +608,12 @@ export const PaperViewer: React.FC = () => {
                 Ananda, A. A. (2026). Rigorous Multiscale Analysis and Topological Control of Stochastic Reaction-Diffusion SPDEs on Deformable Manifolds. <em>Zenodo</em>, Version 1.0.{' '}
                 <a href="https://doi.org/10.5281/zenodo.22806453" target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
                   DOI: 10.5281/zenodo.22806453
+                </a>.
+              </li>
+              <li>
+                Ananda, A. A. (2026). Stochastic Fluid-Structure-Topology Interactions: Fractional SPDE &amp; Lasry-Lions Numerical Solver Suite. <em>Zenodo Software</em>, Version 2.0.0.{' '}
+                <a href="https://doi.org/10.5281/zenodo.23055112" target="_blank" rel="noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold">
+                  DOI: 10.5281/zenodo.23055112
                 </a>.
               </li>
               <li>Aubin, T. (1982). <em>Nonlinear Analysis on Manifolds. Monge-Ampère Equations</em>. Springer.</li>

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Copy, Check, Download, Search, FileCode, Hash, BookOpen } from 'lucide-react';
+import { Copy, Check, Download, Search, FileCode, Hash, BookOpen, ExternalLink } from 'lucide-react';
 import { LATEX_SOURCE } from '../data/latexSource';
 
 export const SourceExplorer: React.FC = () => {
@@ -87,15 +87,27 @@ export const SourceExplorer: React.FC = () => {
         </div>
       </div>
 
-      {/* Quick stats pills */}
-      <div className="px-6 py-2.5 bg-neutral-50 dark:bg-neutral-950 border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-mono text-neutral-500 dark:text-neutral-400 flex flex-wrap items-center gap-4">
+      {/* Quick stats pills & DOIs */}
+      <div className="px-6 py-2.5 bg-neutral-50 dark:bg-neutral-950 border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-mono text-neutral-500 dark:text-neutral-400 flex flex-wrap items-center gap-3">
         <span>Equations: 12 numbered</span>
         <span>•</span>
-        <span>Theorems &amp; Lemmas: 5</span>
+        <span>Theorems: 5</span>
         <span>•</span>
-        <span>CUDA Listings: 1</span>
+        <span>CUDA: 1</span>
         <span>•</span>
-        <span>Citations: 23 BibTeX entries</span>
+        <span>
+          Paper DOI:{' '}
+          <a href="https://doi.org/10.5281/zenodo.23040167" target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
+            10.5281/zenodo.23040167
+          </a>
+        </span>
+        <span>•</span>
+        <span>
+          Software DOI:{' '}
+          <a href="https://doi.org/10.5281/zenodo.23055112" target="_blank" rel="noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline">
+            10.5281/zenodo.23055112
+          </a>
+        </span>
         {filteredLineIndices && (
           <span className="text-indigo-600 dark:text-indigo-400 font-bold ml-auto">
             {filteredLineIndices.length} matches found

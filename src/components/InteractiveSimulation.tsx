@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Play, Pause, RotateCcw, Zap, Sparkles, Activity, ShieldCheck, Sliders, Waves, Layers } from 'lucide-react';
+import { 
+  Play, Pause, RotateCcw, Zap, Sparkles, Activity, ShieldCheck, 
+  Sliders, Waves, Layers, ExternalLink, Copy, Check, Terminal
+} from 'lucide-react';
 import { MathView } from './MathView';
 
 // Grid size for high-fidelity 2D simulation (64x64 or 72x72 for smooth 60fps canvas)
@@ -22,6 +25,7 @@ export const InteractiveSimulation: React.FC = () => {
   const [flowAdvection, setFlowAdvection] = useState<number>(1.2);
   const [colormap, setColormap] = useState<ColormapType>('plasma');
   const [activePreset, setActivePreset] = useState<string>('topological_control');
+  const [copiedSoftwareBibtex, setCopiedSoftwareBibtex] = useState<boolean>(false);
   
   // Real-time scientific telemetry
   const [energyL2, setEnergyL2] = useState<number>(1.0);
@@ -423,6 +427,23 @@ export const InteractiveSimulation: React.FC = () => {
     }
   };
 
+  const copySoftwareCitation = () => {
+    const bibtex = `@software{Ananda2026_SPDE_Software,
+  title={Stochastic Fluid-Structure-Topology Interactions: Fractional SPDE & Lasry-Lions Numerical Solver Suite},
+  author={Ghulam-e-Shah-e-Unmani (Arya Arunachala Ananda)},
+  organization={Aghora Abraham Global LLC},
+  address={Albuquerque, New Mexico, USA},
+  year={2026},
+  month={September},
+  version={2.0.0},
+  doi={10.5281/zenodo.23055112},
+  url={https://doi.org/10.5281/zenodo.23055112}
+}`;
+    navigator.clipboard.writeText(bibtex);
+    setCopiedSoftwareBibtex(true);
+    setTimeout(() => setCopiedSoftwareBibtex(false), 2200);
+  };
+
   return (
     <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 shadow-xl mb-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-neutral-200 dark:border-neutral-800">
@@ -442,6 +463,26 @@ export const InteractiveSimulation: React.FC = () => {
           <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
             Simulates the generalized Itô-Wentzell pullback <MathView math="d\rho" /> with Bochner fractional Laplacian <MathView math="(-\Delta_g)^s" />, Kunita flow advection, and monotone <MathView math="\mathbf{u}_{\mathrm{TDA}}" />.
           </p>
+          <div className="flex flex-wrap items-center gap-2 mt-2 text-xs">
+            <span className="text-neutral-500 font-mono">Software DOI:</span>
+            <a
+              href="https://doi.org/10.5281/zenodo.23055112"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 font-mono font-bold text-indigo-700 dark:text-indigo-300 hover:underline"
+            >
+              <span>10.5281/zenodo.23055112</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+            <button
+              onClick={copySoftwareCitation}
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-mono transition-colors"
+              title="Copy Software BibTeX"
+            >
+              {copiedSoftwareBibtex ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3 text-neutral-500" />}
+              <span>{copiedSoftwareBibtex ? 'BibTeX Copied!' : 'Cite Software'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Action Controls */}

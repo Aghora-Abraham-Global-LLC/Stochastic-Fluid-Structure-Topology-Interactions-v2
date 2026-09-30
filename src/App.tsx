@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   BookOpen, Activity, FileCode, Sun, Moon, 
-  ExternalLink, Award, Copy, Check, Printer
+  ExternalLink, Award, Copy, Check, Printer, Terminal, ChevronDown
 } from 'lucide-react';
 import { PaperViewer } from './components/PaperViewer';
 import { InteractiveSimulation } from './components/InteractiveSimulation';
@@ -12,9 +12,11 @@ type TabType = 'paper' | 'simulation' | 'source';
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('paper');
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-  const [copiedBibtex, setCopiedBibtex] = useState<boolean>(false);
+  const [copiedPaperBibtex, setCopiedPaperBibtex] = useState<boolean>(false);
+  const [copiedSoftwareBibtex, setCopiedSoftwareBibtex] = useState<boolean>(false);
+  const [isCiteMenuOpen, setIsCiteMenuOpen] = useState<boolean>(false);
 
-  const bibtexEntry = `@article{Ananda2026_SPDE_V2,
+  const paperBibtexEntry = `@article{Ananda2026_SPDE_V2,
   title={Stochastic Fluid-Structure-Topology Interactions: Rigorous Homogenization and Lasry-Lions Optimal Control of Fractional SPDEs via Kunita Flows},
   author={Ghulam-e-Shah-e-Unmani (Arya Arunachala Ananda)},
   organization={Aghora Abraham Global LLC},
@@ -26,10 +28,28 @@ export const App: React.FC = () => {
   url={https://doi.org/10.5281/zenodo.23040167}
 }`;
 
-  const copyBibtex = () => {
-    navigator.clipboard.writeText(bibtexEntry);
-    setCopiedBibtex(true);
-    setTimeout(() => setCopiedBibtex(false), 2200);
+  const softwareBibtexEntry = `@software{Ananda2026_SPDE_Software,
+  title={Stochastic Fluid-Structure-Topology Interactions: Fractional SPDE & Lasry-Lions Numerical Solver Suite},
+  author={Ghulam-e-Shah-e-Unmani (Arya Arunachala Ananda)},
+  organization={Aghora Abraham Global LLC},
+  address={Albuquerque, New Mexico, USA},
+  year={2026},
+  month={September},
+  version={2.0.0},
+  doi={10.5281/zenodo.23055112},
+  url={https://doi.org/10.5281/zenodo.23055112}
+}`;
+
+  const copyPaperBibtex = () => {
+    navigator.clipboard.writeText(paperBibtexEntry);
+    setCopiedPaperBibtex(true);
+    setTimeout(() => setCopiedPaperBibtex(false), 2200);
+  };
+
+  const copySoftwareBibtex = () => {
+    navigator.clipboard.writeText(softwareBibtexEntry);
+    setCopiedSoftwareBibtex(true);
+    setTimeout(() => setCopiedSoftwareBibtex(false), 2200);
   };
 
   // Sync dark mode class with root html
@@ -40,6 +60,19 @@ export const App: React.FC = () => {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
+
+  // Close cite menu when clicking outside
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest('#cite-dropdown-container')) {
+        setIsCiteMenuOpen(false);
+      }
+    };
+    if (isCiteMenuOpen) {
+      document.addEventListener('click', handleOutsideClick);
+    }
+    return () => document.removeEventListener('click', handleOutsideClick);
+  }, [isCiteMenuOpen]);
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex flex-col font-sans transition-colors">
@@ -107,14 +140,53 @@ export const App: React.FC = () => {
 
           {/* Right Action Tools */}
           <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={copyBibtex}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200/80 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg text-xs font-medium transition-colors"
-              title="Copy BibTeX Citation"
-            >
-              {copiedBibtex ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-neutral-500" />}
-              <span>{copiedBibtex ? 'BibTeX Copied' : 'Cite'}</span>
-            </button>
+            {/* Cite Dropdown (Paper vs Software) */}
+            <div id="cite-dropdown-container" className="relative">
+              <button
+                onClick={() => setIsCiteMenuOpen(!isCiteMenuOpen)}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200/80 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg text-xs font-medium transition-colors"
+                title="Citation Options"
+              >
+                <Copy className="w-3.5 h-3.5 text-neutral-500" />
+                <span>Cite</span>
+                <ChevronDown className="w-3 h-3 text-neutral-400" />
+              </button>
+
+              {isCiteMenuOpen && (
+                <div className="absolute right-0 mt-1 w-64 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xl p-2 z-50 text-xs">
+                  <div className="text-[10px] uppercase font-bold text-neutral-400 px-2 py-1">
+                    BibTeX Citations
+                  </div>
+                  <button
+                    onClick={() => {
+                      copyPaperBibtex();
+                      setIsCiteMenuOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-left"
+                  >
+                    <div>
+                      <div className="font-semibold text-neutral-800 dark:text-neutral-200">Cite Manuscript</div>
+                      <div className="text-[10px] text-blue-600 dark:text-blue-400 font-mono">DOI: 10.5281/zenodo.23040167</div>
+                    </div>
+                    {copiedPaperBibtex ? <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> : <Copy className="w-3.5 h-3.5 text-neutral-400 shrink-0" />}
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      copySoftwareBibtex();
+                      setIsCiteMenuOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-left"
+                  >
+                    <div>
+                      <div className="font-semibold text-neutral-800 dark:text-neutral-200">Cite Software Suite</div>
+                      <div className="text-[10px] text-indigo-600 dark:text-indigo-400 font-mono">DOI: 10.5281/zenodo.23055112</div>
+                    </div>
+                    {copiedSoftwareBibtex ? <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> : <Terminal className="w-3.5 h-3.5 text-neutral-400 shrink-0" />}
+                  </button>
+                </div>
+              )}
+            </div>
 
             <button
               onClick={() => window.print()}
@@ -142,33 +214,50 @@ export const App: React.FC = () => {
         {/* Render Active View */}
         {activeTab === 'paper' && (
           <div>
-            {/* Publication DOI Banner */}
-            <div className="no-print mb-8 p-4 rounded-xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Award className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                <div className="text-xs">
-                  <span className="font-bold text-neutral-800 dark:text-neutral-200">DOI Indexed Publication:</span>{' '}
-                  <span className="text-neutral-600 dark:text-neutral-400">
-                    Version 2.0 registered at{' '}
-                    <a
-                      href="https://doi.org/10.5281/zenodo.23040167"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-mono text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      10.5281/zenodo.23040167
-                    </a>
-                  </span>
+            {/* Dual Registered DOI Metadata Banner */}
+            <div className="no-print mb-8 p-4 rounded-xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-start sm:items-center gap-3">
+                <Award className="w-6 h-6 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5 sm:mt-0" />
+                <div className="text-xs space-y-1">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className="font-bold text-neutral-800 dark:text-neutral-200">Registered DOIs:</span>
+                    <span>
+                      <span className="text-neutral-500">Manuscript:</span>{' '}
+                      <a
+                        href="https://doi.org/10.5281/zenodo.23040167"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-mono text-blue-600 dark:text-blue-400 font-bold hover:underline"
+                      >
+                        10.5281/zenodo.23040167
+                      </a>
+                    </span>
+                    <span className="text-neutral-300 dark:text-neutral-700">•</span>
+                    <span>
+                      <span className="text-neutral-500">Software Suite:</span>{' '}
+                      <a
+                        href="https://doi.org/10.5281/zenodo.23055112"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-mono text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+                      >
+                        10.5281/zenodo.23055112
+                      </a>
+                    </span>
+                  </div>
+                  <p className="text-neutral-500 dark:text-neutral-400 text-[11px]">
+                    Pure &amp; Applied Mathematics Archive • Computational Physics Solver Engine
+                  </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={() => setActiveTab('simulation')}
-                  className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-xs"
+                  className="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-xs"
                 >
                   <Activity className="w-3.5 h-3.5" />
-                  Launch Interactive Numerical Simulation
+                  Launch Live IMEX Simulator
                 </button>
               </div>
             </div>
@@ -222,14 +311,24 @@ export const App: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4 text-xs">
             <a
               href="https://doi.org/10.5281/zenodo.23040167"
               target="_blank"
               rel="noreferrer"
-              className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+              className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 font-mono"
             >
-              <span>Zenodo DOI (v2.0)</span>
+              <span>Manuscript DOI: 10.5281/zenodo.23040167</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+            <span>•</span>
+            <a
+              href="https://doi.org/10.5281/zenodo.23055112"
+              target="_blank"
+              rel="noreferrer"
+              className="text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 font-mono font-semibold"
+            >
+              <span>Software DOI: 10.5281/zenodo.23055112</span>
               <ExternalLink className="w-3 h-3" />
             </a>
             <span>•</span>
@@ -239,7 +338,7 @@ export const App: React.FC = () => {
               rel="noreferrer"
               className="text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-300 hover:underline flex items-center gap-1"
             >
-              <span>Version 1.0 Archive</span>
+              <span>Version 1.0</span>
               <ExternalLink className="w-3 h-3" />
             </a>
           </div>
